@@ -13,15 +13,11 @@ class TraceRoute:
         # run shell command in subprocess and save the resuts in array as strings
         self.cmd = cmd
         self.args = args
-        route_data = []
-        subprocess.run([cmd, args])
-        response = subprocess.run([cmd, args], stdout=subprocess.PIPE)
-        print(response.stdout.decode('utf-8'))
-        try:
-            with open('logs.txt', 'w+') as file:
-                file.write(response.stdout.decode('utf-8'))
-        except Exception as err:
-            return False
+        cmd_output = []
+        response = subprocess.run(
+            [cmd, args], stdout=subprocess.PIPE, capture_output=Trues)
+        # cmd_output.append(response.stdout.decode('utf-8'))
+        self.getCoordinates()
 
         return True
 
@@ -36,8 +32,10 @@ class TraceRoute:
         # get latitudes and longitudes from routers ip addresses
         self.ip_add = ip_add
         response = DbIpCity.get(ip_add, api_key='free')
-        return {'lat': response.latitude,
-                'log': response.longitude}
+        print("City : {}".format(response.city))
+        # return {'lat': response.latitude,
+        #         'log': response.longitude,
+        #         'city': response.city}
 
     def mapPlotter(self):
         # plot coordinates on map
@@ -45,7 +43,9 @@ class TraceRoute:
 
 
 if __name__ == "__main__":
+
     obj = TraceRoute()
+    print(obj.getCoordinates('52.95.67.180'))
     # pb = ProgressBar(total=100, prefix='Here', suffix='Now',
     #                  decimals=3, length=50, fill='X', zfill='-')
     # pb.print_progress_bar(2)
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     # data = obj.runCommand('tracert', 'google.com')
     # print(obj.dataCleanig_tracetroute(data))
-    subprocess.Popen('dir', shell=True)
+    # subprocess.Popen('dir', shell=True)
 
     # stdout = out.stdout.decode('utf-8')
     # print(stdout)
